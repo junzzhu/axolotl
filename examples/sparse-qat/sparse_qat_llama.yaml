@@ -1,0 +1,76 @@
+# Sparse + QAT Training Configuration Example
+#
+# This configuration enables combined sparse fine-tuning with
+# quantization-aware training on a pre-sparsified model.
+#
+# Requirements:
+# - Pre-sparsified base model (e.g., from RedHatAI on Hugging Face)
+# - torchao >= 0.13.0
+# - llmcompressor (for loading sparse models)
+
+# Base model - must be pre-sparsified
+base_model: RedHatAI/Sparse-Llama-3.1-8B-2of4
+
+# Load the Sparse QAT plugin
+plugins:
+  - axolotl.integrations.sparse_qat.SparseQATPlugin
+
+# Sparse QAT configuration
+sparse_qat:
+  # Regex patterns for layers to keep sparse
+  # These should match the layers that were pruned in the base model
+  sparsity_targets:
+    - "re:.*q_proj.weight"
+    - "re:.*k_proj.weight"
+    - "re:.*v_proj.weight"
+    - "re:.*o_proj.weight"
+    - "re:.*gate_proj.weight"
+    - "re:.*up_proj.weight"
+    - "re:.*down_proj.weight"
+
+  # Target dtype for weight quantization (int4, int8, float8, nvfp4)
+  weight_dtype: int4
+
+  # Target dtype for activation quantization (optional)
+  # activation_dtype: int8
+
+  # Group size for per-group quantization
+  group_size: 32
+
+  # Whether to quantize embedding layers
+  quantize_embedding: false
+
+  # Number of steps before enabling fake quantization
+  # (train normally first to stabilize, then enable quant)
+  fake_quant_after_n_steps: 100
+
+  # Save in compressed sparse format
+  save_compressed: true
+
+# Dataset configuration
+datasets:
+  - path: mlabonne/FineTome-100k
+    type: chat_template
+    field_messages: conversations
+    message_property_mappings:
+      role: from
+      content: value
+    drop_system_message: true
+
+# Training configuration
+sequence_len: 2048
+chat_template: chatml
+
+num_epochs: 1
+micro_batch_size: 2
+gradient_accumulation_steps: 4
+
+learning_rate: 0.00002
+optimizer: adamw_torch_fused
+lr_scheduler: cosine
+warmup_ratio: 0.1
+
+bf16: true
+flash_attention: true
+
+output_dir: ./outputs/sparse-qat-llama3-8b
