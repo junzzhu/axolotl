@@ -55,4 +55,14 @@ model.save_pretrained("./models/sparse-qat-llama3-8b-FP8", save_compressed=True,
 
 ### Deployment (with `RuntimeError`)
 
-The quantized model from either of the above approaches has runtime errors still, i.e. `Engine core initialization` failure, which is to be fixed unfortunatly. Potentially, the QAT has bug still.
+The quantized model from either of the above approaches has runtime errors still, e.g. `Engine core initialization` failure with the following call stack. It is suspected to be an incompatible `flash_attn` for torch, which is to be fixed still.
+
+```bash
+...   ...
+(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]     from flash_attn.ops.triton.rotary import apply_rotary
+(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]   File "/workspace/venv/lib/python3.11/site-packages/flash_attn/__init__.py", line 3, in <module>
+(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]     from flash_attn.flash_attn_interface import (
+(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]   File "/workspace/venv/lib/python3.11/site-packages/flash_attn/flash_attn_interface.py", line 15, in <module>
+(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]     import flash_attn_2_cuda as flash_attn_gpu
+(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866] ImportError: /workspace/venv/lib/python3.11/site-packages/flash_attn_2_cuda.cpython-311-x86_64-linux-gnu.so: undefined symbol: _ZNK3c106SymInt6sym_neERKS0_
+```
