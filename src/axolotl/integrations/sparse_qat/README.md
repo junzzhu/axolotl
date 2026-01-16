@@ -19,13 +19,12 @@ This integration enables training models that are both:
 
 ### Quantization-Aware Training (QAT)
 
-Train a sparse model with quantization awareness for best accuracy, with [atomllama-33K-5x5-DigitMesh-sparse](https://huggingface.co/junzzhu/atomllama-33K-5x5-DigitMesh-sparse) as the example:
+Train a sparse model with quantization awareness for best accuracy, using [atomllama-33K-5x5-DigitMesh-sparse](https://huggingface.co/junzzhu/atomllama-33K-5x5-DigitMesh-sparse) as the example based model and its [training data set](https://github.com/junzzhu/axolotl/blob/main/examples/sparse-qat/digit_train.jsonl):
 
 ```bash
 cd axolotl
 accelerate launch -m axolotl.cli.train examples/sparse-qat/sparse_qat_atom.yaml
 ```
-
 
 ### Quantization
 
@@ -62,15 +61,15 @@ Test the quantized model using the Hugging Face transformers library or vLLM. Fo
 Results on 5×5 digit mesh recognition (10 test patterns, digits 0-9):
 
 ```
-============================================================
+========================================================================
 SUMMARY: Model Comparison
-============================================================
-Model                                              Accuracy        Avg Confidence
-------------------------------------------------------------
-atomllama-33K-5x5-DigitMesh                        10/10 (100.0%)      86.2%
-atomllama-33K-5x5-DigitMesh-sparse                 10/10 (100.0%)      82.3%
-atomllama-33K-5x5-DigitMesh-sparse-q8              10/10 (100.0%)      85.8%
-============================================================
+========================================================================
+Model                                     Accuracy        Avg Confidence
+------------------------------------------------------------------------
+atomllama-33K-5x5-DigitMesh               10/10 (100.0%)      86.2%
+atomllama-33K-5x5-DigitMesh-sparse        10/10 (100.0%)      82.3%
+atomllama-33K-5x5-DigitMesh-sparse-q8     10/10 (100.0%)      85.8%
+========================================================================
 ```
 
 **Key Observations:**
