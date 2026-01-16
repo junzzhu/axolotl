@@ -10,7 +10,7 @@ This integration enables training models that are both:
 
 ## Requirements
 
-- Pre-sparsified base model (e.g., from [RedHatAI on Hugging Face](https://huggingface.co/RedHatAI))
+- Pre-sparsified base model (e.g., from [RedHatAI on Hugging Face](https://huggingface.co/RedHatAI) or a minimal 33K model [atomllama-33K-5x5-DigitMesh-sparse](https://huggingface.co/junzzhu/atomllama-33K-5x5-DigitMesh-sparse))
 - `torchao >= 0.13.0`
 
 ---
@@ -19,20 +19,20 @@ This integration enables training models that are both:
 
 ### Quantization-Aware Training (QAT)
 
-Train a sparse model with quantization awareness for best accuracy:
+Train a sparse model with quantization awareness for best accuracy, with [atomllama-33K-5x5-DigitMesh-sparse](https://huggingface.co/junzzhu/atomllama-33K-5x5-DigitMesh-sparse) as the example:
 
 ```bash
 cd axolotl
-accelerate launch -m axolotl.cli.train examples/sparse-qat/sparse_qat_llama.yaml.yaml
+accelerate launch -m axolotl.cli.train examples/sparse-qat/sparse_qat_atom.yaml
 ```
 
 
 ### Quantization
 
-It may use either `axolotl` or `llm-compressor`.
+It may use either `axolotl` or `llm-compressor` (preferred to get safetensors output).
 
 ```bash
-axolotl quantize examples/sparse-qat/sparse_qat_llama.yaml.yaml
+axolotl quantize examples/sparse-qat/sparse_qat_atom.yaml
 ```
 
 or
@@ -42,27 +42,38 @@ from transformers import AutoModelForCausalLM
 from llmcompressor.modifiers.quantization import QuantizationModifier
 from llmcompressor import oneshot
 recipe = [
-    QuantizationModifier(scheme="FP8_DYNAMIC", targets="Linear", ignore=["lm_head"]),
+    QuantizationModifier(scheme="W4A8", targets="Linear", ignore=["lm_head"]),
 ]
-model_name_or_path = "./models/sparse-qat-llama3-8b"
+model_name_or_path = "./models/atomllama-33K-5x5-DigitMesh-sparse-int8"
 model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype="auto", device_map="auto")
 oneshot(
     model=model,
     recipe=recipe,
+    output_dir="./models/atomllama-33K-5x5-DigitMesh-sparse-q8"
 )
-model.save_pretrained("./models/sparse-qat-llama3-8b-FP8", save_compressed=True, skip_sparsity_compression_stats=True)
 ```
 
-### Deployment (with `RuntimeError`)
+### Verification
 
-The quantized model from either of the above approaches has runtime errors still, e.g. `Engine core initialization` failure with the following call stack. It is suspected to be an incompatible `flash_attn` for torch, which is to be fixed still.
+Test the quantized model using the Hugging Face transformers library or vLLM. For sample testing code, see the [model card on Hugging Face of the quantized atomllama-33K-5x5-DigitMesh-sparse-q8](https://huggingface.co/junzzhu/atomllama-33K-5x5-DigitMesh-sparse-q8).
 
-```bash
-...   ...
-(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]     from flash_attn.ops.triton.rotary import apply_rotary
-(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]   File "/workspace/venv/lib/python3.11/site-packages/flash_attn/__init__.py", line 3, in <module>
-(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]     from flash_attn.flash_attn_interface import (
-(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]   File "/workspace/venv/lib/python3.11/site-packages/flash_attn/flash_attn_interface.py", line 15, in <module>
-(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866]     import flash_attn_2_cuda as flash_attn_gpu
-(EngineCore_DP0 pid=8666) ERROR 01-14 21:53:41 [core.py:866] ImportError: /workspace/venv/lib/python3.11/site-packages/flash_attn_2_cuda.cpython-311-x86_64-linux-gnu.so: undefined symbol: _ZNK3c106SymInt6sym_neERKS0_
+### Performance Comparison
+
+Results on 5×5 digit mesh recognition (10 test patterns, digits 0-9):
+
 ```
+============================================================
+SUMMARY: Model Comparison
+============================================================
+Model                                              Accuracy        Avg Confidence
+------------------------------------------------------------
+atomllama-33K-5x5-DigitMesh                        10/10 (100.0%)      86.2%
+atomllama-33K-5x5-DigitMesh-sparse                 10/10 (100.0%)      82.3%
+atomllama-33K-5x5-DigitMesh-sparse-q8              10/10 (100.0%)      85.8%
+============================================================
+```
+
+**Key Observations:**
+- All three models maintain **100% accuracy** on the digit recognition task
+- The sparse-q8 model achieves **85.8% average confidence**, recovering most of the confidence lost during sparsification (82.3%)
+- The quantized sparse model provides **~3x compression** (46KB vs. 137KB) while maintaining accuracy with faster inference

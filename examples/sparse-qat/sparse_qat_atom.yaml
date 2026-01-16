@@ -1,19 +1,20 @@
-# Sparse + QAT Training Configuration Example
+# Sparse + QAT Training Configuration for Atom LLaMA
 #
 # This configuration enables combined sparse fine-tuning with
-# quantization-aware training on a pre-sparsified model.
+# quantization-aware training on the pre-sparsified atom-llama model.
 #
 # Requirements:
-# - Pre-sparsified base model (e.g., from RedHatAI on Hugging Face)
+# - Pre-sparsified base model
 # - torchao >= 0.13.0
-# - llmcompressor (for loading sparse models)
 
-# Base model - must be pre-sparsified
-base_model: RedHatAI/Sparse-Llama-3.1-8B-2of4
+base_model: junzzhu/atomllama-33K-5x5-DigitMesh-sparse
 
 # Fix tokenizer padding token issue
 special_tokens:
-  pad_token: "<|end_of_text|>"
+  pad_token: "<SEP>"
+
+integrations:
+  - sparse_qat  # This triggers plugin load
 
 # Load the Sparse QAT plugin
 plugins:
@@ -33,7 +34,7 @@ sparse_qat:
     - "re:.*down_proj.weight"
 
   # Target dtype for weight quantization (int4, int8, float8, nvfp4)
-  weight_dtype: int4
+  weight_dtype: int8
 
   # Target dtype for activation quantization (optional)
   # activation_dtype: int8
@@ -46,35 +47,42 @@ sparse_qat:
 
   # Number of steps before enabling fake quantization
   # (train normally first to stabilize, then enable quant)
-  fake_quant_after_n_steps: 100
+  fake_quant_after_n_steps: 50
 
   # Save in compressed sparse format
   save_compressed: true
 
 # Dataset configuration
+# Using converted digit recognition dataset in completion format
 datasets:
-  - path: mlabonne/FineTome-100k
-    type: chat_template
-    field_messages: conversations
-    message_property_mappings:
-      role: from
-      content: value
-    drop_system_message: true
+  - path: ./examples/sparse-qat/digit_train.jsonl
+    ds_type: json
+    type: completion
+    field: text
+
+quantization:
+  weight_dtype: int8
+  group_size: 32
 
 # Training configuration
-sequence_len: 2048
-chat_template: chatml
+sequence_len: 32  # Match model's max_position_embeddings
 
-num_epochs: 1
+num_epochs: 1000  # max_steps: 5000
 micro_batch_size: 2
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 2
 
-learning_rate: 0.00002
+learning_rate: 0.0001
 optimizer: adamw_torch_fused
 lr_scheduler: cosine
 warmup_ratio: 0.1
 
 bf16: true
-flash_attention: true
+flash_attention: false  # Tiny model doesn't need flash attention
 
-output_dir: ./outputs/sparse-qat-llama3-8b-fp8
+output_dir: ./outputs/atomllama-33K-5x5-DigitMesh-sparse-int8
+
+# Logging
+logging_steps: 10
+save_steps: 100
+eval_steps: 100
+

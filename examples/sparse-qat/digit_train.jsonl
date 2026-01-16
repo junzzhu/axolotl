@@ -1,0 +1,22 @@
+{"text": "1 1 1 1 1 1 0 0 0 1 1 0 0 0 1 1 0 0 0 1 1 1 1 1 1 <SEP> D0", "metadata": {"description": "digit 0 - original", "is_test": false, "digit": 0}}
+{"text": "0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 <SEP> D1", "metadata": {"description": "digit 1 - original", "is_test": false, "digit": 1}}
+{"text": "1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 <SEP> D2", "metadata": {"description": "digit 2 - original", "is_test": false, "digit": 2}}
+{"text": "1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 <SEP> D3", "metadata": {"description": "digit 3 - original", "is_test": false, "digit": 3}}
+{"text": "1 0 0 0 1 1 0 0 0 1 1 1 1 1 1 0 0 0 0 1 0 0 0 0 1 <SEP> D4", "metadata": {"description": "digit 4 - original", "is_test": false, "digit": 4}}
+{"text": "1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 <SEP> D5", "metadata": {"description": "digit 5 - original", "is_test": false, "digit": 5}}
+{"text": "1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 <SEP> D6", "metadata": {"description": "digit 6 - original", "is_test": false, "digit": 6}}
+{"text": "1 1 1 1 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 <SEP> D7", "metadata": {"description": "digit 7 - original", "is_test": false, "digit": 7}}
+{"text": "1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 <SEP> D8", "metadata": {"description": "digit 8 - original", "is_test": false, "digit": 8}}
+{"text": "1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 <SEP> D9", "metadata": {"description": "digit 9 - original", "is_test": false, "digit": 9}}
+{"text": "1 1 1 1 1 1 1 0 1 1 1 0 0 0 1 1 1 0 1 1 1 1 1 1 1 <SEP> D0", "metadata": {"description": "digit 0 - variation (thicker lines)", "is_test": false, "digit": 0}}
+{"text": "0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 <SEP> D1", "metadata": {"description": "digit 1 - variation (shifted right)", "is_test": false, "digit": 1}}
+{"text": "0 1 1 1 1 0 0 0 0 1 0 1 1 1 1 1 0 0 0 0 1 1 1 1 1 <SEP> D2", "metadata": {"description": "digit 2 - variation (different style)", "is_test": false, "digit": 2}}
+{"text": "0 1 1 1 1 0 0 0 0 1 0 1 1 1 1 0 0 0 0 1 0 1 1 1 1 <SEP> D3", "metadata": {"description": "digit 3 - variation (rounder)", "is_test": false, "digit": 3}}
+{"text": "1 0 0 0 1 1 0 0 0 1 0 1 1 1 1 0 0 0 0 1 0 0 0 0 1 <SEP> D4", "metadata": {"description": "digit 4 - variation (different junction)", "is_test": false, "digit": 4}}
+{"text": "1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1 1 1 <SEP> D5", "metadata": {"description": "digit 5 - variation (different middle)", "is_test": false, "digit": 5}}
+{"text": "1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 <SEP> D6", "metadata": {"description": "digit 6 - variation (rounder bottom)", "is_test": false, "digit": 6}}
+{"text": "1 1 1 1 1 0 0 0 1 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 <SEP> D7", "metadata": {"description": "digit 7 - variation (with horizontal line)", "is_test": false, "digit": 7}}
+{"text": "1 1 1 1 1 1 0 0 0 1 0 1 1 1 0 1 0 0 0 1 1 1 1 1 1 <SEP> D8", "metadata": {"description": "digit 8 - variation (narrower middle)", "is_test": false, "digit": 8}}
+{"text": "0 1 1 1 1 1 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 <SEP> D9", "metadata": {"description": "digit 9 - variation (different top)", "is_test": false, "digit": 9}}
+{"text": "0 1 1 1 0 1 0 0 0 1 0 1 1 1 0 1 0 0 0 1 0 1 1 1 1 <SEP> D8", "metadata": {"description": "digit 8 - variation (narrower middle)", "is_test": false, "digit": 8}}
+{"text": "0 1 1 1 0 1 0 0 0 1 0 1 1 1 0 1 0 0 0 1 1 1 1 1 0 <SEP> D8", "metadata": {"description": "digit 8 - variation (narrower middle)", "is_test": false, "digit": 8}}
